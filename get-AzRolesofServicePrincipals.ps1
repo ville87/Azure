@@ -1,8 +1,8 @@
 # Get all Subscriptions
-$clzsubs = Get-AzSubscription
+$subs = Get-AzSubscription
 $SPRoles = @()
 # Foreach subscription, get the resource groups
-foreach($sub in $clzsubs){
+foreach($sub in $subs){
     # Set the context to the current sub and get all resource groups
     Set-AzContext -SubscriptionObject $sub
     $currentsub = $sub.Name
