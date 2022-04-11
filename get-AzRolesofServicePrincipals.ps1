@@ -1,3 +1,21 @@
+[string] $Delimiter = "," # Change this delimiter for localization support of CSV import into Excel
+[string] $ExportDir = (Join-Path ([Environment]::GetFolderPath("Desktop")) 'ExportDir') # Change path here if you don't want the generated CSV to be stored on the current users desktop
+$ModuleArray = @("Az")
+
+ForEach ($ReqModule in $ModuleArray){
+    If ($null -eq (Get-Module $ReqModule -ListAvailable -ErrorAction SilentlyContinue)){
+        Install-Module -Name $ReqModule -Force
+        Import-Module -Name $ReqModule
+    } ElseIf ($null -eq (Get-Module $ReqModule -ErrorAction SilentlyContinue)){
+        Import-Module -Name $ReqModule
+    }
+}
+# Authenticate to the tenant
+Connect-AzAccount
+# create output dir
+If (!(Test-Path $ExportDir)){
+    New-Item -Path $ExportDir -ItemType "Directory" -Force
+}
 # Get all Subscriptions
 $subs = Get-AzSubscription
 $SPRoles = @()
@@ -28,4 +46,4 @@ foreach($sub in $subs){
         }
     }
 }
-$SPRoles 
+$SPRoles | Export-Csv $ExportDir\AzADSPRoleAssignments.csv -NoTypeInformation -Delimiter $Delimiter
