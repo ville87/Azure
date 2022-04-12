@@ -63,5 +63,5 @@ Connect-AzureAD -AzureEnvironmentName $AzureEnvironment
 If (!(Test-Path $ExportDir)){
     New-Item -Path $ExportDir -ItemType "Directory" -Force
 }
-# Choose subscription
+# Run the function
 Get-AzureSPAppRoles -AzureEnvironment $AzureEnvironment -ExportDir $ExportDir -Verbose -Delimiter $Delimiter
