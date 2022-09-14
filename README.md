@@ -1,5 +1,22 @@
 # All things about Azure
 
+## Tools & Documentation
+Collections:   
+- https://github.com/Kyuu-Ji/Awesome-Azure-Pentest
+
+Assess Azure Security:   
+- AzureHound https://github.com/BloodHoundAD/AzureHound
+- Stormspotter https://github.com/Azure/Stormspotter
+- PowerZure https://github.com/hausec/PowerZure
+
+Attacking / Lateral Movement:   
+- MicroBurst: https://github.com/NetSPI/MicroBurst
+- Lava https://github.com/mattrotlevi/lava
+
+DFIR / Detect Compromise:   
+- Sparrow https://github.com/cisagov/Sparrow
+
+
 ## Roles and Permissions
 * Graph permissions reference: https://docs.microsoft.com/en-us/graph/permissions-reference#all-permissions-and-ids
 * Azure AD permission reference: https://docs.microsoft.com/en-us/azure/active-directory/roles/permissions-reference
