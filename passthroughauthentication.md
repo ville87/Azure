@@ -7,8 +7,8 @@ https://o365blog.com/post/pta-deepdive/
 - PTA relies on PTA agents installed on one or more on-premises servers. Microsoft [recommends](https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-pta-quick-start) installing a minimum of three agents for high availability.
 
 
-![AzureADSecureworks](/images/AzureAD-pta-flaws-1.png)
-High-level PTA architecture. (Source: Secureworks)   
+![AzureADSecureworks](/images/AzureAD-pta-flaws-1.png)   
+High-level PTA architecture. (Source: [Secureworks](https://www.secureworks.com/research/azure-active-directory-pass-through-authentication-flaws))   
 1. A user accesses a service that uses the Azure AD identity platform (e.g., Microsoft 365) and provides their username and password.
 2. Azure AD encrypts the credentials and sends an authentication request to one or more PTA agents.
 3. The PTA agent decrypts the user’s credentials, attempts to log in to Active Directory with decrypted credentials, and returns results to Azure AD.
