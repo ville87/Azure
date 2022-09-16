@@ -16,6 +16,8 @@ Attacking / Lateral Movement:
 DFIR / Detect Compromise:   
 - Sparrow https://github.com/cisagov/Sparrow
 
+Other:
+- MSIdentityTools: https://www.powershellgallery.com/packages/MSIdentityTools/2.0.20?s=03
 
 ## Roles and Permissions
 * Graph permissions reference: https://docs.microsoft.com/en-us/graph/permissions-reference#all-permissions-and-ids
