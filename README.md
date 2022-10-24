@@ -20,7 +20,7 @@ Other:
 - MSIdentityTools: https://www.powershellgallery.com/packages/MSIdentityTools/2.0.20?s=03
 
 ## Recon
-Get tenant information:   
+Get tenant information (e.g. tenantId:   
 `Invoke-AADIntReconAsOutsider -DomainName example.com`   
 
 ## Roles and Permissions
