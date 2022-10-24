@@ -19,6 +19,10 @@ DFIR / Detect Compromise:
 Other:
 - MSIdentityTools: https://www.powershellgallery.com/packages/MSIdentityTools/2.0.20?s=03
 
+## Recon
+Get tenant information:   
+`Invoke-AADIntReconAsOutsider -DomainName example.com`   
+
 ## Roles and Permissions
 * Graph permissions reference: https://docs.microsoft.com/en-us/graph/permissions-reference#all-permissions-and-ids
 * Azure AD permission reference: https://docs.microsoft.com/en-us/azure/active-directory/roles/permissions-reference
