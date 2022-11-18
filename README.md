@@ -23,6 +23,10 @@ Other:
 Get tenant information (e.g. tenantId:   
 `Invoke-AADIntReconAsOutsider -DomainName example.com`   
 
+### Storage services
+Enumerate azure file resources (using MicroBurst):   
+`Invoke-EnumerateAzureBlobs -Base <keyword>`   
+
 ## Roles and Permissions
 * Graph permissions reference: https://docs.microsoft.com/en-us/graph/permissions-reference#all-permissions-and-ids
 * Azure AD permission reference: https://docs.microsoft.com/en-us/azure/active-directory/roles/permissions-reference
