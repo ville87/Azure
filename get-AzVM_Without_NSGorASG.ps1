@@ -1,5 +1,5 @@
 param(
-    [Parameter(Mandatory = $false)]$TenantID
+    [Parameter(Mandatory = $true)]$TenantID
 )
  
 $ErrorActionPreference = "Stop"
