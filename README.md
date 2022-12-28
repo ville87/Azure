@@ -42,8 +42,9 @@ When an application is given permission to access resources in a tenant (upon re
 
 *Legacy* - This type of service principal represents a legacy app, which is an app created before app registrations were introduced or an app created through legacy experiences. A legacy service principal can have credentials, service principal names, reply URLs, and other properties that an authorized user can edit, but does not have an associated app registration. The service principal can only be used in the tenant where it was created.
 
-## Querying data with PowerShell
+# Querying data with PowerShell
 
+## Querying Roles and Permissions
 ### Azure AD Roles
 Get all roles and their members:   
 `Get-AzureADDirectoryRole | % { $rolemembers = Get-AzureADDirectoryRoleMember -ObjectId $_.ObjectId; if($rolemembers.count -gt 0){ Write-output "`r`n`r`nMembers of $($_.DisplayName):"; $rolemembers | Get-AzureADUser } }`   
@@ -74,7 +75,6 @@ The application registration only defines which permission the application requi
 
 Note: This grants permissions to the application - not to users. This means that all users belonging to the Azure AD tenant that use this application will be granted these permissions - even non-admin users!   
 
-
 ### Linking Graph URIs and PS cmdlets
 | MS Graph API | PowerShell Cmdlet|
 | ------------ | ----------------- |
@@ -82,3 +82,14 @@ Note: This grants permissions to the application - not to users. This means that
 | /v1.0/servicePrincipals | Get-AzADServicePrincipal |
 | /v1.0/users | Get-AzADUser |
 | /v1.0/servicePrincipals/{ServicePrincipalID}/appRoleAssignments | Get-AzRoleAssignment |
+
+## MgGraph PS Module
+Connect using MgGraph module, and specifying required scopes (permissions):   
+```
+Connect-MgGraph -TenantId $tenantId
+$RequiredScopes = @("UserActivity.ReadWrite.CreatedByApp", "Directory.ReadWrite.All")
+Connect-MgGraph -Scopes $RequiredScopes
+```
+Find commands specific to a url:   
+`Find-MgGraphCommand -uri "/users/{id}/activities"`   
+
