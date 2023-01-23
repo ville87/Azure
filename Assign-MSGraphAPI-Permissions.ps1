@@ -17,3 +17,42 @@ $AppRole = $GraphServicePrincipal.AppRoles | Where-Object {$_.Value -eq $Permiss
 
 # assign the permission
 New-AzureAdServiceAppRoleAssignment -ObjectId $mgdidentity.ObjectId -PrincipalId $mgdidentity.ObjectId -ResourceId $GraphServicePrincipal.ObjectId -Id $AppRole.Id
+
+#########################################
+# Using the MG module (from: https://stackoverflow.com/a/72905062)
+
+$DestinationTenantId = Read-Host "please provide the tenant Id"
+$MsiName = Read-Host "Please provide the name of the system- or user-assigned managed identity" # Name of system-assigned or user-assigned managed service identity. (System-assigned use same name as resource).
+
+# Define permissions to assign here...
+$oPermissions = @(
+  "Directory.ReadWrite.All"
+  "Group.ReadWrite.All"
+  "GroupMember.ReadWrite.All"
+  "User.ReadWrite.All"
+  "RoleManagement.ReadWrite.Directory"
+)
+
+$GraphAppId = "00000003-0000-0000-c000-000000000000" # Don't change this.
+
+$oMsi = Get-AzADServicePrincipal -Filter "displayName eq '$MsiName'"
+$oGraphSpn = Get-AzADServicePrincipal -Filter "appId eq '$GraphAppId'"
+
+$oAppRole = $oGraphSpn.AppRole | Where-Object {($_.Value -in $oPermissions) -and ($_.AllowedMemberType -contains "Application")}
+
+Connect-MgGraph -TenantId $DestinationTenantId
+
+foreach($AppRole in $oAppRole)
+{
+  $oAppRoleAssignment = @{
+    "PrincipalId" = $oMSI.Id
+    #"ResourceId" = $GraphAppId
+    "ResourceId" = $oGraphSpn.Id
+    "AppRoleId" = $AppRole.Id
+  }
+  
+  New-MgServicePrincipalAppRoleAssignment `
+    -ServicePrincipalId $oAppRoleAssignment.PrincipalId `
+    -BodyParameter $oAppRoleAssignment `
+    -Verbose
+}
