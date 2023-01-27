@@ -93,3 +93,5 @@ Connect-MgGraph -Scopes $RequiredScopes
 Find commands specific to a url:   
 `Find-MgGraphCommand -uri "/users/{id}/activities"`   
 
+## Azure Token Cache
+The powershell contexts are stored in: `$env:USERPROFILE\.Azure`   
