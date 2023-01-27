@@ -13,3 +13,5 @@ Verify installation with:
 `choco -?`   
 
 ## Setup Terraforms
+Using Chocolatey:   
+`choco install terraform -y`   
