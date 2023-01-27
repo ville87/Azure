@@ -1,0 +1,6 @@
+# Use Terraform for Azure Deployments
+## Setup Az CLI
+Run PowerShell as admin:   
+```
+$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; rm .\AzureCLI.msi
+```
