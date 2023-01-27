@@ -15,3 +15,15 @@ Verify installation with:
 ## Setup Terraforms
 Using Chocolatey:   
 `choco install terraform -y`   
+
+## Login & Subs
+`az login`
+Set specific subscription:   
+`az account set --subscription "<subscription_id_or_subscription_name>"`   
+
+## Use Terraform
+``` 
+terraform init
+terraform plan 
+terraform apply
+```
