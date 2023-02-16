@@ -95,3 +95,11 @@ Find commands specific to a url:
 
 ## Azure Token Cache
 The powershell contexts are stored in: `$env:USERPROFILE\.Azure`   
+
+# Misc
+## Azure Debug Shells
+**Linux**
+![linux ssh shell](/img/azure_webapp-debugconsole-linux.png)
+**Windows**
+![windows ssh shell](/img/azure_webapp-debugconsole.png)
+
