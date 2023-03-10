@@ -98,6 +98,7 @@ The powershell contexts are stored in: `$env:USERPROFILE\.Azure`
 
 # Misc
 ## Azure Debug Shells & APIs
+From: https://posts.specterops.io/abusing-azure-app-service-managed-identity-assignments-c3adefccff95   
 ### App Service Host API
 URL: `https://$($app.Name).scm.azurewebsites.net/api/command`   
 
