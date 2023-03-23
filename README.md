@@ -97,9 +97,15 @@ Find commands specific to a url:
 The powershell contexts are stored in: `$env:USERPROFILE\.Azure`   
 
 # Misc
-## Azure Debug Shells
+## Azure Debug Shells & APIs
+From: https://posts.specterops.io/abusing-azure-app-service-managed-identity-assignments-c3adefccff95   
+### App Service Host API
+URL: `https://$($app.Name).scm.azurewebsites.net/api/command`   
+
+### App Service Debug Shells
 **Linux**
 ![linux ssh shell](/images/azure_webapp-debugconsole-linux.png)
+
 **Windows**
 ![windows ssh shell](/images/azure_webapp-debugconsole.png)
 
