@@ -1,4 +1,6 @@
-# Exportfiles defined here
+# Script to export Azure AD role assignments, RBAC role assignments from a chosen subscription and MS Graph app role assignments for users and Service Principals.
+
+# Exportfiles are defined here
 $date = Get-Date -Format 'dd_MM_yyyy-HH_mm_ss'
 $AzRoleAssignmentsCSV = "$env:USERPROFILE\Desktop\$date`_AzRoleAssignments.csv"
 $AzureADRoleAssignmentsCSV = "$env:USERPROFILE\Desktop\$date`_AzureADRoleAssignments.csv"
