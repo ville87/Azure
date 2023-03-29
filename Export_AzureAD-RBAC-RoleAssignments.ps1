@@ -62,7 +62,10 @@ try {
                     ObjectId = $GroupMember.ObjectId
                     ObjectType = $GroupMember.ObjectType
                     DisplayName = $GroupMember.DisplayName
+                    SignInName = $AzRoleAssignment.SignInName
                     RoleDefinitionName = $RoleDefinitionName
+                    Scope = $AzRoleAssignment.Scope
+                    CanDelegate = $AzRoleAssignment.CanDelegate
                     Note = "Added via Group $($AzRoleAssignment.DisplayName)"
                 }
                 $AllAzRoleAssignmentsList += $data
@@ -73,7 +76,10 @@ try {
                 ObjectId = $AzRoleAssignment.ObjectId
                 ObjectType = $AzRoleAssignment.ObjectType
                 DisplayName = $AzRoleAssignment.DisplayName
+                SignInName = $AzRoleAssignment.SignInName
                 RoleDefinitionName = $AzRoleAssignment.RoleDefinitionName
+                Scope = $AzRoleAssignment.Scope
+                CanDelegate = $AzRoleAssignment.CanDelegate
                 Note = "N/A"
             }
             $AllAzRoleAssignmentsList += $data
