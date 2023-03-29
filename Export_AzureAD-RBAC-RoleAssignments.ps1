@@ -1,4 +1,5 @@
 # Script to export Azure AD role assignments, RBAC role assignments from a chosen subscription and MS Graph app role assignments for users and Service Principals.
+[string]$MSGraphURL = "https://graph.microsoft.com"
 
 # Exportfiles are defined here
 $date = Get-Date -Format 'dd_MM_yyyy-HH_mm_ss'
