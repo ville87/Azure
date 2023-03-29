@@ -50,19 +50,30 @@ Get all roles and their members:
 `Get-AzureADDirectoryRole | % { $rolemembers = Get-AzureADDirectoryRoleMember -ObjectId $_.ObjectId; if($rolemembers.count -gt 0){ Write-output "`r`n`r`nMembers of $($_.DisplayName):"; $rolemembers | Get-AzureADUser } }`   
 
 *Query Azure RBAC Roles for Service Principals*   
-```
+```powershell
 $ResourceGroupServicePrincipalRoles = Get-AzRoleAssignment -ResourceGroupName $RG.ResourceGroupName | where-Object { $_.ObjectType -eq "ServicePrincipal" }
 foreach($RGSPR in $ResourceGroupServicePrincipalRoles){
     Get-AzADServicePrincipal -ObjectId $RGSPR.ObjectId
 }
 ```
 *Query Graph API Roles for Service Principals*   
-```
+```powershell
 $ServicePrincipals = Get-AzureADServicePrincipal -All $true
 foreach($ServicePrincipal in $ServicePrincipals){
     Get-AzureADServiceAppRoleAssignedTo -ObjectId $ServicePrincipal.ObjectId | Where-Object {$_.ResourceDisplayName -eq "Microsoft Graph"}
 }
 ```
+
+## Script to Query RBAC, AzureAD and MS Graph API Role Assignments
+First run the script to export all assignments to a file:   
+[Export_AzureAD-RBAC-RoleAssignments.ps1](Export_AzureAD-RBAC-RoleAssignments.ps1)   
+Afterwards, you can define a scope and e.g. get all RBAC roles which affect the given scope:
+```powershell
+$azureRBACRoles = Get-Content .\29_03_2023-10_23_09_AzRoleAssignments.csv | ConvertFrom-Csv
+$scope = "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/rg_test/providers/Microsoft.Storage/storageAccounts/stgacctest"
+$azureRBACRoles | where-object { $scope -like "$($_ | select -ExpandProperty Scope)*" }
+```
+Azure AD roles and MS Graph permissions have to be verified manually. (Check for highly privileged roles etc.)
 
 ## Microsoft Graph API
 Microsoft Graph API base URL: https://graph.microsoft.com   
@@ -85,7 +96,7 @@ Note: This grants permissions to the application - not to users. This means that
 
 ## MgGraph PS Module
 Connect using MgGraph module, and specifying required scopes (permissions):   
-```
+```powershell
 Connect-MgGraph -TenantId $tenantId
 $RequiredScopes = @("UserActivity.ReadWrite.CreatedByApp", "Directory.ReadWrite.All")
 Connect-MgGraph -Scopes $RequiredScopes
