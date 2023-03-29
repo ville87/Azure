@@ -48,6 +48,7 @@ Connect-AzureAD
 #############################
 
 ############# RBAC role assignments #############
+Write-Host "Collecting Azure RBAC role assignments..."
 $AllAzRoleAssignmentsList = @()
 try {
     $AllAzRoleAssignments = Get-AzRoleAssignment -Scope $subScope 
@@ -85,6 +86,7 @@ catch {
 }
 
 ############# AzureAD role assignments #############
+Write-Host "Collecting Azure AD role assignments..."
 try{
     $UserRoles = Get-AzureADDirectoryRole | ForEach-Object {
         $Role = $_
@@ -110,79 +112,83 @@ try{
 
 ############# MS Graph permissions #############
 Write-Host "Collecting app role assignments from MS Graph..."
-$Headers = Get-AzureGraphToken
-# Get all service principals
-$SPsURI = "$MSGraphURL/v1.0/servicePrincipals"
-$SPObjects = $null
-$ServicePrincipals = $null
-Write-Host "Collecting Service Principals in environment..."
-do{
-    $ServicePrincipals = Invoke-RestMethod `
-        -Headers $Headers `
-        -URI $SPsURI `
-        -UseBasicParsing `
-        -Method "GET" `
-        -ContentType "application/json"
-    if($ServicePrincipals.value){
-        $SPObjects += $ServicePrincipals.value 
-    }else{
-        $SPObjects += $ServicePrincipals
+try{
+    $Headers = Get-AzureGraphToken
+    # Get all service principals
+    $SPsURI = "$MSGraphURL/v1.0/servicePrincipals"
+    $SPObjects = $null
+    $ServicePrincipals = $null
+    Write-Host "Collecting Service Principals in environment..."
+    do{
+        $ServicePrincipals = Invoke-RestMethod `
+            -Headers $Headers `
+            -URI $SPsURI `
+            -UseBasicParsing `
+            -Method "GET" `
+            -ContentType "application/json"
+        if($ServicePrincipals.value){
+            $SPObjects += $ServicePrincipals.value 
+        }else{
+            $SPObjects += $ServicePrincipals
+        }
+        $SPsURI = $ServicePrincipals.'@odata.nextlink'
+    } until (!($SPsURI))
+
+    # Get all users
+    $UsersURI = "$MSGraphURL/v1.0/users"
+    $UsersObjects = $null	
+    $Users = $null
+    Write-Host "Collecting Users in environment..."
+    do{
+        $Users = Invoke-RestMethod `
+            -Headers $Headers `
+            -URI $UsersURI `
+            -UseBasicParsing `
+            -Method "GET" `
+            -ContentType "application/json"
+        if($Users.value){
+            $UsersObjects += $Users.value 
+        }else{
+            $UsersObjects += $Users
+        }
+        $UsersURI = $Users.'@odata.nextlink'
+    } until (!($UsersURI))
+
+    # Get User AppRoleAssignments
+    $UserIDs = ($UsersObjects).id
+    $UserAppRoleAssignments = $null
+    ForEach ($id in $UserIDs){
+        $req = $null
+        $UserAppRoleAssignmentURL = 'https://graph.microsoft.com/v1.0/users/{0}/appRoleAssignments' -f $id
+        $req = Invoke-RestMethod -Headers $Headers `
+            -Uri $UserAppRoleAssignmentURL `
+            -Method GET
+        $UserAppRoleAssignments += $req.value
     }
-    $SPsURI = $ServicePrincipals.'@odata.nextlink'
-} until (!($SPsURI))
-
-# Get all users
-$UsersURI = "$MSGraphURL/v1.0/users"
-$UsersObjects = $null	
-$Users = $null
-Write-Host "Collecting Users in environment..."
-do{
-    $Users = Invoke-RestMethod `
-        -Headers $Headers `
-        -URI $UsersURI `
-        -UseBasicParsing `
-        -Method "GET" `
-        -ContentType "application/json"
-    if($Users.value){
-        $UsersObjects += $Users.value 
+    if(($UserAppRoleAssignments | measure).Count -gt 0){
+        $UserAppRoleAssignments | Export-CSV -NoTypeInformation -Path $MSGraphUserAppRoleAssignmentsCSV
     }else{
-        $UsersObjects += $Users
+        "None identified" | Out-File -FilePath $MSGraphUserAppRoleAssignmentsCSV
     }
-    $UsersURI = $Users.'@odata.nextlink'
-} until (!($UsersURI))
 
-# Get User AppRoleAssignments
-$UserIDs = ($UsersObjects).id
-$UserAppRoleAssignments = $null
-ForEach ($id in $UserIDs){
-    $req = $null
-    $UserAppRoleAssignmentURL = 'https://graph.microsoft.com/v1.0/users/{0}/appRoleAssignments' -f $id
-    $req = Invoke-RestMethod -Headers $Headers `
-        -Uri $UserAppRoleAssignmentURL `
-        -Method GET
-    $UserAppRoleAssignments += $req.value
-}
-if(($UserAppRoleAssignments | measure).Count -gt 0){
-    $UserAppRoleAssignments | Export-CSV -NoTypeInformation -Path $MSGraphUserAppRoleAssignmentsCSV
-}else{
-    "None identified" | Out-File -FilePath $MSGraphUserAppRoleAssignmentsCSV
-}
-
-# Get SP AppRoleAssignments
-$ServicePrincipalIDs = ($SPObjects).id
-$SPAppRoleAssignments = $null
-ForEach ($id in $ServicePrincipalIDs){
-    $req = $null
-    $SPAppRoleAssignmentURL = 'https://graph.microsoft.com/v1.0/servicePrincipals/{0}/appRoleAssignments' -f $id
-    $req = Invoke-RestMethod -Headers $Headers `
-        -Uri $SPAppRoleAssignmentURL `
-        -Method GET
-    $SPAppRoleAssignments += $req.value
-}
-if(($SPAppRoleAssignments | measure).Count -gt 0){
-    $SPAppRoleAssignments | Export-CSV -NoTypeInformation -Path $MSGraphSPAppRoleAssignmentsCSV
-}else{
-    "None identified" | Out-File -FilePath $MSGraphSPAppRoleAssignmentsCSV
+    # Get SP AppRoleAssignments
+    $ServicePrincipalIDs = ($SPObjects).id
+    $SPAppRoleAssignments = $null
+    ForEach ($id in $ServicePrincipalIDs){
+        $req = $null
+        $SPAppRoleAssignmentURL = 'https://graph.microsoft.com/v1.0/servicePrincipals/{0}/appRoleAssignments' -f $id
+        $req = Invoke-RestMethod -Headers $Headers `
+            -Uri $SPAppRoleAssignmentURL `
+            -Method GET
+        $SPAppRoleAssignments += $req.value
+    }
+    if(($SPAppRoleAssignments | measure).Count -gt 0){
+        $SPAppRoleAssignments | Export-CSV -NoTypeInformation -Path $MSGraphSPAppRoleAssignmentsCSV
+    }else{
+        "None identified" | Out-File -FilePath $MSGraphSPAppRoleAssignmentsCSV
+    }
+}catch{
+    Write-Warning "There was an error when trying to get the MS Graph API app role assignments!"
 }
 
 Write-Host "Script finished! You can find the csv files here: `r`n$AzRoleAssignmentsCSV`r`n$AzureADRoleAssignmentsCSV`r`n$MSGraphUserAppRoleAssignmentsCSV`r`n$MSGraphSPAppRoleAssignmentsCSV"
