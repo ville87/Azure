@@ -154,7 +154,7 @@ ForEach ($id in $UserIDs){
 if(($UserAppRoleAssignments | measure).Count -gt 0){
     $UserAppRoleAssignments | Export-CSV -NoTypeInformation -Path $MSGraphUserAppRoleAssignmentsCSV
 }else{
-    "None identified" | Out-File -Path $MSGraphUserAppRoleAssignmentsCSV
+    "None identified" | Out-File -FilePath $MSGraphUserAppRoleAssignmentsCSV
 }
 
 # Get SP AppRoleAssignments
@@ -171,7 +171,7 @@ ForEach ($id in $ServicePrincipalIDs){
 if(($SPAppRoleAssignments | measure).Count -gt 0){
     $SPAppRoleAssignments | Export-CSV -NoTypeInformation -Path $MSGraphSPAppRoleAssignmentsCSV
 }else{
-    "None identified" | Out-File -Path $MSGraphSPAppRoleAssignmentsCSV
+    "None identified" | Out-File -FilePath $MSGraphSPAppRoleAssignmentsCSV
 }
 
 Write-Host "Script finished! You can find the csv files here: `r`n$AzRoleAssignmentsCSV`r`n$AzureADRoleAssignmentsCSV`r`n$MSGraphUserAppRoleAssignmentsCSV`r`n$MSGraphSPAppRoleAssignmentsCSV"
