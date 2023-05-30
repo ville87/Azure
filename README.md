@@ -120,3 +120,9 @@ URL: `https://$($app.Name).scm.azurewebsites.net/api/command`
 **Windows**
 ![windows ssh shell](/images/azure_webapp-debugconsole.png)
 
+## Azure Datacenter IPs
+You can list all IP Address prefixes for Azure services for a specific region:   
+```powershell
+$serviceTags = Get-AzNetworkServiceTag -Location NorthEurope
+$serviceTags.values.properties.Addressprefixes
+```
