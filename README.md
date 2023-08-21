@@ -1,4 +1,4 @@
-# All things about Azure
+# All things about Azure & M365
 
 ## Tools & Documentation
 Collections:   
@@ -126,3 +126,10 @@ You can list all IP Address prefixes for Azure services for a specific region:
 $serviceTags = Get-AzNetworkServiceTag -Location NorthEurope
 $serviceTags.values.properties.Addressprefixes
 ```
+
+# OSINT
+## User Enum
+### OneDrive based User Enum
+It is possible to check if a user exists by sending a HTTP HEAD request to a onedrive url. The format of the url is always:   
+ `https://company-my.sharepoint.com/personal/username_domain_tld`   
+Note: Dots (.) and at (@) have to be replaced with underscore (_).
