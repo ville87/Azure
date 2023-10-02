@@ -129,6 +129,17 @@ $serviceTags.values.properties.Addressprefixes
 
 # OSINT
 ## User Enum
+### GetCredentialType
+```powershell
+$users=@("aaa@abcdef.onmicrosoft.com","user1@abcdef.onmicrosoft.com")
+# Loop trough all users
+foreach($user in $users)
+{
+    $exists = Invoke-RestMethod -Uri "https://login.microsoftonline.com/common/GetCredentialType" -ContentType "application/json" -Method POST -Body (@{"username"="$user"; "isOtherIdpSupported" =  $true}|ConvertTo-Json) | Select -ExpandProperty IfExistsResult
+    $properties = [ordered]@{"Username"=$user; "Exists"=$($exists -eq 0 -or $exists -eq 6)}
+    New-Object -TypeName PSObject -Property $properties
+}
+```
 ### OneDrive based User Enum
 It is possible to check if a user exists by sending a HTTP HEAD request to a onedrive url. The format of the url is always:   
  `https://company-my.sharepoint.com/personal/username_domain_tld`   
