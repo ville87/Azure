@@ -29,3 +29,5 @@ do {
     }
     $uri = $Results.'@odata.nextlink'
 } until (!($uri))
+write-host "Done, found $($signins.count) entries:"
+$signins |select createdDateTime,userPrincipalName,appDisplayName,ipAddress,conditionalAccessStatus,status
