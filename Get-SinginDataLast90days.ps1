@@ -1,5 +1,4 @@
-# This gets all signin data of the last 30 days in your tenant
-# Note: Change the timestamps in the URL so that they fit the last 30 days!
+# This gets all signin data of the last 90 days in your tenant
 ########### Vars and helper functions ########### 
 [string]$MSGraphURL = "https://graph.microsoft.com"
 function Get-AzureGraphToken {
@@ -16,7 +15,9 @@ function Get-AzureGraphToken {
 $tenantId = Read-host "Please provide the tenant Id"
 $ConnectAzAcc = Connect-AzAccount -TenantID $tenantId
 $Headers = Get-AzureGraphToken
-$URI = 'https://graph.microsoft.com/beta/auditLogs/signIns?api-version=beta&$filter=(createdDateTime ge 2023-08-01T22:58:32.666Z and createdDateTime lt 2023-11-01T22:58:32.666Z)&$top=999&$orderby=createdDateTime desc&source=adfs' 
+$startdate = (get-date).adddays(-90).ToString("yyyy-MM-ddThh:mm:ss")
+$enddate = get-date -Format yyyy-MM-ddThh:mm:ss
+$URI = "https://graph.microsoft.com/beta/auditLogs/signIns?api-version=beta&`$filter=(createdDateTime ge $startdate.666Z and createdDateTime lt $enddate.666Z)&`$top=999&`$orderby=createdDateTime desc&source=adfs"
 $Results = $null
 $SignIns = $null
 do {
