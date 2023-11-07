@@ -12,6 +12,7 @@ Assess Azure Security:
 Attacking / Lateral Movement:   
 - MicroBurst: https://github.com/NetSPI/MicroBurst
 - Lava https://github.com/mattrotlevi/lava
+- GraphRunner: https://github.com/dafthack/GraphRunner
 
 DFIR / Detect Compromise:   
 - Sparrow https://github.com/cisagov/Sparrow
@@ -171,3 +172,12 @@ Files used in parameters:
 - users.txt → list of emails, one per line (e.g. matti.meikalainen@domain.fi)
 - passlist.txt → list of passwords to test
 - useragent.txt → list of useragents, e.g. taken from: https://github.com/knavesec/CredMaster/blob/master/useragents.txt
+
+# File Search in SharePoint and OneDrive
+## GraphRunner
+```powershell
+# First get tokens
+Get-GraphTokens
+# Now search for keywords
+Invoke-SearchSharePointAndOneDrive -Tokens $tokens -SearchTerm pass*
+```
