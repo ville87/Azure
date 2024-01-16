@@ -43,6 +43,9 @@ When an application is given permission to access resources in a tenant (upon re
 
 *Legacy* - This type of service principal represents a legacy app, which is an app created before app registrations were introduced or an app created through legacy experiences. A legacy service principal can have credentials, service principal names, reply URLs, and other properties that an authorized user can edit, but does not have an associated app registration. The service principal can only be used in the tenant where it was created.
 
+## O365 Tokens
+Cache Windows: `%LOCALAPPDATA%\Microsoft\TokenBroker\Cache`   
+
 # Querying data with PowerShell
 
 ## Querying Roles and Permissions
