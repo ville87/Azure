@@ -68,9 +68,6 @@ foreach($ServicePrincipal in $ServicePrincipals){
 }
 ```
 
-Get all highly privileged accounts which are not cloud-only (i.e. synchronized from on-premises AD):   
-`$azureadroleassignments |Where-Object { ($_.MemberOnPremID -ne "") -and ( $_.RoleDisplayName -match "Global Administrator|Privileged Authentication Administrator|Privileged Role Administrator|Partner Tier2 Support" ) }`
-
 ## Script to Query RBAC, AzureAD and MS Graph API Role Assignments
 First run the script to export all assignments to a file:   
 [Export_AzureAD-RBAC-RoleAssignments.ps1](Export_AzureAD-RBAC-RoleAssignments.ps1)   
