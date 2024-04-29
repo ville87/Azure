@@ -108,6 +108,19 @@ Connect-MgGraph -Scopes $RequiredScopes
 Find commands specific to a url:   
 `Find-MgGraphCommand -uri "/users/{id}/activities"`   
 
+### Get Required Permissions (Scopes) for specific cmdlet
+The Find-MgGraphCommand cmdlet can be used to discover the required permissions for another cmdlet. For example, to see all permissions that can be used to call Get-MgUser, run;
+```
+Find-MgGraphCommand -command Get-MgUser | Select -First 1 -ExpandProperty Permissions
+
+Name                                         IsAdmin Description                                   FullDescription
+----                                         ------- -----------                                   ---------------
+Directory.Read.All                           True    Read directory data                           [...]
+Directory.ReadWrite.All                      True    Read and write directory data                 [...]
+User.Read.All                                True    Read all users' full profiles                 [...]
+[...]
+```
+
 ## Azure Token Cache
 The powershell contexts are stored in: `$env:USERPROFILE\.Azure`   
 
