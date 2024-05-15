@@ -1,7 +1,5 @@
 # Export all MS Graph App Role Assignments of a tenant
 $MSGraphURL             = "https://graph.microsoft.com"
-$AzRMURL                = "https://management.azure.com"
-
 function Get-AzureGraphToken {
     $APSUser = Get-AzContext *>&1 
     $resource = "$MSGraphURL"
@@ -13,17 +11,18 @@ function Get-AzureGraphToken {
 }
 
 $tenantid = Read-Host "Please provide the tenantId"
-$ConnectAzAcc = Connect-AzAccount -TenantID $tenantId
+#$ConnectAzAcc = Connect-AzAccount -TenantID $tenantId
 $Headers = Get-AzureGraphToken
 # First get the name of the approles
-$approlesresponse = Invoke-RestMethod -Uri $url -Headers $Headers
-$allapproles = $approlesresponse.approles
+$graphroledefinitionsurl = "$MSGraphURL/v1.0/servicePrincipals?`$filter=appId eq '00000003-0000-0000-c000-000000000000'&`$select=appRoles, oauth2PermissionScopes"
+$graphroledefinitions = Invoke-RestMethod -Headers $Headers -Uri $graphroledefinitionsurl -Method Get
+$allapproles = $graphroledefinitions.value.approles
 # Import all exported approleassignments (SPs and Users) from the target environment
 # You can get the approleassignments of an environment using the following graph endpoints:
 # "https://graph.microsoft.com/v1.0/users/{id}/approleassignments"
 # "https://graph.microsoft.com/v1.0/servicePrincipals/{id}/approleassignments"
-$allSPapproleassignments = import-csv .\MSGraphAppRoles_ServicePrincipals.csv
-$allUserapproleassignments = import-csv .\MSGraphAppRoles_Users.csv
+$allSPapproleassignments = import-csv "C:\Users\bob\Desktop\MSGraphAppRoles.csv"
+$allUserapproleassignments = import-csv "C:\Users\bob\Desktop\MSGraphUserAppRoles.csv"
 $listofapproleassignments = @()
 foreach($approleassignment in $allSPapproleassignments){
     $data = @{
