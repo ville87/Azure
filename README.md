@@ -137,6 +137,19 @@ URL: `https://$($app.Name).scm.azurewebsites.net/api/command`
 **Windows**
 ![windows ssh shell](/images/azure_webapp-debugconsole.png)
 
+### Virtual Machines
+Blog which describes these urls: https://cybercx.co.nz/blog/azure-ssrf-metadata/   
+
+Metadata endpoint: `http://169.254.169.254/metadata/instance?api-version=2020-06-01`   
+Bearer Token for MI: `http://169.254.169.254/metadata/identity/oauth2/token?resource=https://management.azure.com&api-version=2020-06-01`   
+-> Depending on permissions of MI, this token could be then used to e.g. list resources via Azure resource manager API (management.azure.com)   
+Instance info: `http://169.254.169.254/metadata/v1/instanceinfo`   
+List supported WireServer versions: `http://168.63.129.16/?comp=versions`   
+Supported API versions of HostGAPlugin: `http://168.63.129.16:32526/versions`   
+VMSettings: `http://168.63.129.16:32526/vmSettings`   
+Expected state of machine: `http://168.63.129.16/machine/?comp=goalstate`   
+
+
 ## Azure Datacenter IPs
 You can list all IP Address prefixes for Azure services for a specific region:   
 ```powershell
