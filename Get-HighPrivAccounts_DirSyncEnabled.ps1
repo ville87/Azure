@@ -23,12 +23,16 @@ try{
     }
     foreach($userentry in $highprivmembers){
         if($userentry.IsDirectorySynced -like "UNKNOWN"){
-            $currentuser = Get-AzureADUser -ObjectId $userentry.ObjectId
-            $IsDirSynced = $currentuser.DirSyncEnabled
-            If($IsDirSynced -like "True"){
-                $highprivmembers | ? { $_.ObjectId -like $userentry.ObjectId} |% { $_.IsDirectorySynced = "True" }
-            }else{
-                $highprivmembers | ? { $_.ObjectId -like $userentry.ObjectId} |% { $_.IsDirectorySynced = "False" }
+            try{
+                $currentuser = Get-AzureADUser -ObjectId $userentry.ObjectId
+                $IsDirSynced = $currentuser.DirSyncEnabled
+                If($IsDirSynced -like "True"){
+                    $highprivmembers | ? { $_.ObjectId -like $userentry.ObjectId} |% { $_.IsDirectorySynced = "True" }
+                }else{
+                    $highprivmembers | ? { $_.ObjectId -like $userentry.ObjectId} |% { $_.IsDirectorySynced = "False" }
+                }
+            }catch{
+                Write-Warning "There was an error when trying to query the user with Id $($userentry.ObjectId). A possible cause is that this is an enterprise app... Check manually!"
             }
         }
     }
