@@ -32,6 +32,7 @@ do{
     $AppRegsURL = $AppRegsResponse.'@odata.nextlink'
 } until (!($AppRegsURL))
 $AllAppRegsData | ConvertTo-Json | Out-File ".\AllAppRegs-$tenantid.json"
+$AppRegSecretsObj = @()
 $AllAppRegsData | % {  
     if($_.passwordcredentials -ne $null) {  
         $AppId = $($_.appId) 
@@ -39,17 +40,34 @@ $AllAppRegsData | % {
         $_.passwordcredentials | % { 
             # Check if the secret is expiring in more than 5 years
             if((Get-Date -Date $($_.endDateTime)) -gt (Get-Date).AddYears(5) ){
-                "AppDisplayName: $AppDisplayName`nAppId: $AppId`nSecretName: $($_.displayName)`nEndDateTime: $($_.endDateTime)`n---------------------`n" 
+                $data = [pscustomobject]@{
+                    AppDisplayName = $AppDisplayName
+                    AppId = $AppId
+                    SecretName = $($_.displayName)
+                    EndDateTime = $($_.endDateTime)
+                }
+                $AppRegSecretsObj += $data
             }  
         } 
-    }elseif($_.keyCredentials -ne $null){
+    }
+    if($_.keyCredentials -ne $null){
         $AppId = $($_.appId) 
         $AppDisplayname = $($_.displayName)
         $_.keyCredentials | % { 
             # Check if the certificate is expiring in more than 5 years
             if((Get-Date -Date $($_.endDateTime)) -gt (Get-Date).AddYears(5) ){
-                "AppDisplayName: $AppDisplayName`nAppId: $AppId`nCertDisplayName: $($_.displayName)`nEndDateTime: $($_.endDateTime)`n---------------------`n" 
+                $data = [pscustomobject]@{
+                    AppDisplayName = $AppDisplayName
+                    AppId = $AppId
+                    nCertDisplayName = $($_.displayName)
+                    EndDateTime = $($_.endDateTime)
+                }
+                $AppRegSecretsObj += $data
             }
         }
     }
+}
+if(($AppRegSecretsObj |Measure-Object).count -gt 0){
+    Write-Host "Found app registrations with long living secrets or certificates:`n"
+    $AppRegSecretsObj |fl
 }
