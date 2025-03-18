@@ -117,4 +117,4 @@ if([String]::IsNullOrEmpty($user))
 {
     $user = (Read-Accesstoken -AccessToken $response.access_token).unique_name
 }
-Write-Host "Received access token for $user"
+Write-Host "Received access token for $user`:`r`n$($response | ConvertTo-Json)"
