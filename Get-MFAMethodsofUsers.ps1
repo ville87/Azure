@@ -16,7 +16,7 @@ foreach ($user in $users) {
       MFAstatus          = "-"
       email              = "False"
       fido2              = "False"
-      fido2model         = "n/a"
+      fido2methods       = "n/a"
       app                = "False"
       MSauthApp          = "False"
       MSauthAppDeviceTag = "n/a"
@@ -29,67 +29,76 @@ foreach ($user in $users) {
   }
 
   $MFAData = Get-MgUserAuthenticationMethod -UserId $user.UserPrincipalName
-  # PAsskeys might need beta endpoint: $MFADataBeta = Get-MgBetaUserAuthenticationMethod -UserId $user.UserPrincipalName
 
   $CustomPSObject.user = $user.UserPrincipalName;
-      ForEach ($method in $MFAData) {
-      
-          Switch ($method.AdditionalProperties["@odata.type"]) {
-            "#microsoft.graph.emailAuthenticationMethod"  { 
-              $CustomPSObject.email = $true 
-              $CustomPSObject.MFAstatus = "Enabled"
-            }    
-            "#microsoft.graph.microsoftAuthenticatorAuthenticationMethod"  { 
-              $CustomPSObject.app = $true 
-              $CustomPSObject.MFAstatus = "Enabled"
-            }    
-            "#microsoft.graph.passwordAuthenticationMethod"                {              
-                  $CustomPSObject.password = $true 
-                  if($CustomPSObject.MFAstatus -ne "Enabled")
-                  {
-                      $CustomPSObject.MFAstatus = "Disabled"
-                  }                
-            }     
-            "#microsoft.graph.phoneAuthenticationMethod"  { 
-              $CustomPSObject.phone = $true 
-              $CustomPSObject.MFAstatus = "Enabled"
-            }   
-              "#microsoft.graph.softwareOathAuthenticationMethod"  { 
-              $CustomPSObject.softwareoath = $true 
-              $CustomPSObject.MFAstatus = "Enabled"
-            }           
-              "#microsoft.graph.temporaryAccessPassAuthenticationMethod"  { 
-              $CustomPSObject.tempaccess = $true 
-              $CustomPSObject.MFAstatus = "Enabled"
-            }           
-              "#microsoft.graph.windowsHelloForBusinessAuthenticationMethod"  { 
-              $CustomPSObject.hellobusiness = $true 
-              $CustomPSObject.MFAstatus = "Enabled"
+  ForEach ($method in $MFAData) {
+  
+      Switch ($method.AdditionalProperties["@odata.type"]) {
+        "#microsoft.graph.emailAuthenticationMethod"  { 
+          $CustomPSObject.email = $true 
+          $CustomPSObject.MFAstatus = "Enabled"
+        }    
+        "#microsoft.graph.microsoftAuthenticatorAuthenticationMethod"  { 
+          $CustomPSObject.app = $true 
+          $CustomPSObject.MFAstatus = "Enabled"
+        }    
+        "#microsoft.graph.passwordAuthenticationMethod"                {              
+              $CustomPSObject.password = $true 
+              if($CustomPSObject.MFAstatus -ne "Enabled")
+              {
+                  $CustomPSObject.MFAstatus = "Disabled"
+              }                
+        }     
+        "#microsoft.graph.phoneAuthenticationMethod"  { 
+          $CustomPSObject.phone = $true 
+          $CustomPSObject.MFAstatus = "Enabled"
+        }   
+          "#microsoft.graph.softwareOathAuthenticationMethod"  { 
+          $CustomPSObject.softwareoath = $true 
+          $CustomPSObject.MFAstatus = "Enabled"
+        }           
+          "#microsoft.graph.temporaryAccessPassAuthenticationMethod"  { 
+          $CustomPSObject.tempaccess = $true 
+          $CustomPSObject.MFAstatus = "Enabled"
+        }           
+          "#microsoft.graph.windowsHelloForBusinessAuthenticationMethod"  { 
+          $CustomPSObject.hellobusiness = $true 
+          $CustomPSObject.MFAstatus = "Enabled"
+        }
+
+    }
+    # Check MS Authenticator app separately (different MgGraph cmdlet)
+    $MSAuthmethod = Get-MgUserAuthenticationMicrosoftAuthenticatorMethod -UserId $user.UserPrincipalName
+    if(-not $MSAuthmethod){
+      $CustomPSObject.MSauthApp = "False"
+    }else{
+      $CustomPSObject.MSauthApp = $true 
+      $CustomPSObject.MSauthAppDeviceTag = $($MSAuthmethod.DeviceTag -join ';')
+      $CustomPSObject.MSAuthAppDisplayName = $($MSAuthmethod.DisplayName -join ';')
+      $CustomPSObject.MFAstatus = "Enabled"
+    }
+
+    # Check FIDO separately (different MgGraph cmdlet)
+    $Fido2Method = Get-MgUserAuthenticationFido2Method -UserId $user.UserPrincipalName
+    if (-not $Fido2Method) {
+        $CustomPSObject.fido2 = "False"
+    }else {
+        $CustomPSObject.fido2 = $true 
+        $CustomPSObject.MFAstatus = "Enabled"
+        $FIDO2Object = @()
+        foreach ($Fido2MethodItem in $Fido2Method) {
+            $MethodObject = [PSCustomObject]@{
+                AttestationLevel = $Fido2MethodItem.AttestationLevel
+                Fido2Model       = $Fido2MethodItem.Model
+                DisplayName      = $Fido2MethodItem.DisplayName
+                CreatedDateTime  = $Fido2MethodItem.CreatedDateTime
+                AaGuid           = $Fido2MethodItem.AaGuid
             }
-
+            $FIDO2Object += $MethodObject
         }
-        # Check MS Authenticator app separately (different MgGraph cmdlet)
-        $MSAuthmethod = Get-MgUserAuthenticationMicrosoftAuthenticatorMethod -UserId $user.UserPrincipalName
-        if($MSAuthmethod -eq $null){
-          $CustomPSObject.MSauthApp = "False"
-        }else{
-          $CustomPSObject.MSauthApp = $true 
-          $CustomPSObject.MSauthAppDeviceTag = $($MSAuthmethod.DeviceTag -join ';')
-          $CustomPSObject.MSAuthAppDisplayName = $($MSAuthmethod.DisplayName -join ';')
-          $CustomPSObject.MFAstatus = "Enabled"
-        }
-
-        # Check FIDO separately (different MgGraph cmdlet)
-        $Fido2Method = Get-MgUserAuthenticationFido2Method -UserId $user.UserPrincipalName
-        if($fido2method -eq $null){
-          $CustomPSObject.fido2 = "False"
-        }else{
-          $CustomPSObject.fido2 = $true 
-          $CustomPSObject.fido2model = $($fido2method.Model -join ';')
-          $CustomPSObject.MFAstatus = "Enabled"
-        }
-      }
-
+        $CustomPSObject.fido2methods = $FIDO2Object
+    }
+  }
   $results+= $CustomPSObject;
 
 }
