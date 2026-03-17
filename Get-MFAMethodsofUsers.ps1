@@ -29,6 +29,7 @@ foreach ($user in $users) {
   }
 
   $MFAData = Get-MgUserAuthenticationMethod -UserId $user.UserPrincipalName
+  # PAsskeys might need beta endpoint: $MFADataBeta = Get-MgBetaUserAuthenticationMethod -UserId $user.UserPrincipalName
 
   $CustomPSObject.user = $user.UserPrincipalName;
       ForEach ($method in $MFAData) {
