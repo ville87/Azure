@@ -35,10 +35,9 @@ $oPermissions = @(
 
 $GraphAppId = "00000003-0000-0000-c000-000000000000" # Don't change this.
 
-
 $oGraphSpn = Get-MgServicePrincipal -Filter "appId eq '$GraphAppId'"
 
-$oAppRole = $oGraphSpn.AppRole | Where-Object {($_.Value -in $oPermissions) -and ($_.AllowedMemberType -contains "Application")}
+$oAppRole = $oGraphSpn.AppRoles | Where-Object {($_.Value -in $oPermissions) -and ($_.AllowedMemberTypes -contains "Application")}
 
 Connect-MgGraph -TenantId $DestinationTenantId
 
